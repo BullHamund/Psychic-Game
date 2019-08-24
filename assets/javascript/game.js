@@ -4,53 +4,43 @@ var letters = ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "a", "s", "d", 
 //var to track wins, losses, and guesses
 var wins = 0;
 var losses = 0;
-var guessesLeft = 9;
-var lettersGuessed = 0;
-var letterArray = [];
-var randomGen = randomGen;
+var guessesLeft = 10;
+var lettersGuessed = [];
+var guessedLetter = null;
 //computers random letter choice
-randomGen = letters[Math.floor(Math.random() * letters.length)];
-console.log(randomGen);
-//var compChoice = letters[randomGen];
-
-function compChoice() {
+var randomGen = letters[Math.floor(Math.random() * letters.length)];
+//reset function to restart game
+function reset() {
+	guessesLeft = 10;
+	lettersGuessed = [];
 	randomGen = letters[Math.floor(Math.random() * letters.length)];
-	console.log(randomGen);
 }
 
 document.onkeyup = function (event) {
 
-		var userGuess = event.key;
+	var guessedLetter = String.fromCharCode(event.keyCode).toLowerCase();
 
-		if (userGuess === randomGen) {
-			wins++;
-			guessesLeft = 9;
-			letterArray = [];
-		}
-
-		compChoice();
-		if (guessesLeft == 0) {
-			losses++;
-			guessesLeft = 9;
-			letterArray = [];
-
-		} else if (/[a-zA-Z]/.test(userGuess)) {
-			guessesLeft--;
-			letterArray.push(userGuess);
-		}
-		document.getElementById("wins").textContent = "Wins: " + wins;
-		document.getElementById("losses").textContent = "Losses: " + losses;
-		document.getElementById("guessesLeft").textContent = "Guesses left: " + guessesLeft;
-		document.getElementById("lettersGuessed").textContent = "Guesses so far: " + letterArray;
-
+	if (lettersGuessed.indexOf(guessedLetter) < 0 && letters.indexOf(guessedLetter) >= 0) {
+		lettersGuessed[lettersGuessed.length] = guessedLetter;
+		guessesLeft--;
 	}
-		/*function checkGuess(theKey) {
-			if (theKey === compChoice) {
-				alert("You are correct!")
-				wins++;
-			} else {
-				alert("Try again!");
-				guessesLeft--;
-			}
 
-		}*/
+	// Alert if won and tally wins and reset
+	if (randomGen == guessedLetter) {
+		alert("You win, " + randomGen + " is correct!");
+		wins++;
+		reset();
+	}
+	// alert if lost, tally losses and reset 
+	if (guessesLeft === 0) {
+		alert("Sorry, you lose, " + randomGen + " was the letter I was thinking of.");
+		losses++;
+		reset();
+	}
+	// add variables to html
+	document.getElementById("wins").textContent = "Wins: " + wins;
+	document.getElementById("losses").textContent = "Losses: " + losses;
+	document.getElementById("guessesLeft").textContent = "Guesses left: " + guessesLeft;
+	document.getElementById("lettersGuessed").textContent = "Guesses so far: " + lettersGuessed;
+
+}
